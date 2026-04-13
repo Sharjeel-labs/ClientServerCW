@@ -8,6 +8,8 @@ package com.mycompany.clientservercw.resources;
  *
  * @author mskha
  */
-public class ApplicationConfig {
-    
+//public class ApplicationConfig {
+ @ApplicationPath("/api/v1")
+public class ApplicationConfig extends Application {
 }
+
