@@ -13,10 +13,11 @@ import java.util.List;
 
 
 
+
 public class Room {
 
-    private String id;          // e.g., "LIB-301"
-    private String name;        // e.g., "Library Study Room"
+    private String id;
+    private String name;
     private int capacity;
     private List<String> sensorIds = new ArrayList<>();
 
