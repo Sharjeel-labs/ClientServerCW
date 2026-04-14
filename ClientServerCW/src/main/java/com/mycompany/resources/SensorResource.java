@@ -4,7 +4,6 @@
  */
 package com.mycompany.resources;
 import com.mycompany.models.Sensor;
-import com.mycompany.exceptions.LinkedResourceNotFoundException;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import java.util.*;
@@ -14,65 +13,39 @@ import java.util.*;
  */
 
 
-
 @Path("/sensors")
-@Produces(MediaType.APPLICATION_JSON)
-@Consumes(MediaType.APPLICATION_JSON)
 public class SensorResource {
 
     private static Map<String, Sensor> sensors = new HashMap<>();
 
     @GET
+    @Produces(MediaType.APPLICATION_JSON)
     public Collection<Sensor> getSensors(@QueryParam("type") String type) {
 
         if (type == null) {
             return sensors.values();
         }
 
-        List<Sensor> result = new ArrayList<>();
+        List<Sensor> filtered = new ArrayList<>();
 
         for (Sensor s : sensors.values()) {
-            if (s.getType().equalsIgnoreCase(type)) {
-                result.add(s);
+            if (s.getType() != null && s.getType().equalsIgnoreCase(type)) {
+                filtered.add(s);
             }
         }
 
-        return result;
+        return filtered;
     }
 
     @POST
-    public Sensor addSensor(Sensor sensor) {
-
-        // check if room exists
-        if (!SensorRoomResource.getRoomsMap().containsKey(sensor.getRoomId())) {
-            throw new LinkedResourceNotFoundException("Room ID not found");
-        }
-
+    @Consumes(MediaType.APPLICATION_JSON)
+    public void addSensor(Sensor sensor) {
         sensors.put(sensor.getId(), sensor);
-
-        // add sensor to room
-        SensorRoomResource.getRoomsMap()
-                .get(sensor.getRoomId())
-                .getSensorIds()
-                .add(sensor.getId());
-
-        return sensor;
     }
 
-    @GET
-    @Path("/{id}")
-    public Sensor getSensor(@PathParam("id") String id) {
-        return sensors.get(id);
-    }
-
-    // sub-resource
+    // SUB-RESOURCE LOCATOR
     @Path("/{id}/readings")
-    public SensorReadingResource getReadings(@PathParam("id") String id) {
-        return new SensorReadingResource(id);
-    }
-
-    // helper
-    public static Map<String, Sensor> getSensorsMap() {
-        return sensors;
+    public SensorReadingResource getReadingResource(@PathParam("id") String id) {
+        return new SensorReadingResource(id, sensors);
     }
 }

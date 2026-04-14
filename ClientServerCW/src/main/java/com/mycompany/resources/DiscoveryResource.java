@@ -18,6 +18,7 @@ import java.util.Map;
 
 
 
+
 @Path("/")
 public class DiscoveryResource {
 
@@ -34,7 +35,7 @@ public class DiscoveryResource {
         links.put("rooms", "/api/v1/rooms");
         links.put("sensors", "/api/v1/sensors");
 
-        data.put("endpoints", links);
+        data.put("links", links);
 
         return data;
     }

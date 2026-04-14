@@ -3,56 +3,48 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package com.mycompany.resources;
-import com.mycompany.models.Room;
-import com.mycompany.exceptions.RoomNotEmptyException;
+import com.mycompany.models.Sensor;
+import com.mycompany.models.SensorReading;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import java.util.*;
+
 /**
  *
  * @author mskha
  */
 
 
-@Path("/rooms")
-@Produces(MediaType.APPLICATION_JSON)
-@Consumes(MediaType.APPLICATION_JSON)
-public class SensorRoomResource {
 
-    private static Map<String, Room> rooms = new HashMap<>();
+public class SensorReadingResource {
+
+    private String sensorId;
+    private Map<String, Sensor> sensors;
+
+    private static Map<String, List<SensorReading>> readings = new HashMap<>();
+
+    public SensorReadingResource(String sensorId, Map<String, Sensor> sensors) {
+        this.sensorId = sensorId;
+        this.sensors = sensors;
+    }
 
     @GET
-    public Collection<Room> getRooms() {
-        return rooms.values();
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<SensorReading> getReadings() {
+        return readings.getOrDefault(sensorId, new ArrayList<>());
     }
 
     @POST
-    public Room addRoom(Room room) {
-        rooms.put(room.getId(), room);
-        return room;
-    }
+    @Consumes(MediaType.APPLICATION_JSON)
+    public void addReading(SensorReading reading) {
 
-    @GET
-    @Path("/{id}")
-    public Room getRoom(@PathParam("id") String id) {
-        return rooms.get(id);
-    }
+        readings.putIfAbsent(sensorId, new ArrayList<>());
+        readings.get(sensorId).add(reading);
 
-    @DELETE
-    @Path("/{id}")
-    public void deleteRoom(@PathParam("id") String id) {
-
-        Room room = rooms.get(id);
-
-        if (room != null && !room.getSensorIds().isEmpty()) {
-            throw new RoomNotEmptyException("Room cannot be deleted, sensors still inside");
+        // update sensor current value (important for marks)
+        Sensor sensor = sensors.get(sensorId);
+        if (sensor != null) {
+            sensor.setCurrentValue(reading.getValue());
         }
-
-        rooms.remove(id);
-    }
-
-    // helper (used by SensorResource)
-    public static Map<String, Room> getRoomsMap() {
-        return rooms;
     }
 }
