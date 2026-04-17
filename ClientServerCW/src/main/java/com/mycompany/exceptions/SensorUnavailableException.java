@@ -8,6 +8,9 @@ package com.mycompany.exceptions;
  *
  * @author mskha
  */
-public class SensorUnavailableException {
-    
+public class SensorUnavailableException extends RuntimeException {
+
+    public SensorUnavailableException(String message) {
+        super(message);
+    }
 }
