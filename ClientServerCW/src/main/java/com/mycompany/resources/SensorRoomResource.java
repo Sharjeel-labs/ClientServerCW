@@ -3,6 +3,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 
+
 package com.mycompany.resources;
 
 import com.mycompany.models.Room;
@@ -70,5 +71,10 @@ public class SensorRoomResource {
         return Response.status(Response.Status.NOT_FOUND)
                 .entity("Room not found")
                 .build();
+    }
+
+    // ✅ FIX: now INSIDE class
+    public static List<Room> getRoomsStatic() {
+        return rooms;
     }
 }
