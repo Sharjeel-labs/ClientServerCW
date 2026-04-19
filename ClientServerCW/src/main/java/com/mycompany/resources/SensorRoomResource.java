@@ -4,11 +4,11 @@
  */
 package com.mycompany.resources;
 import com.mycompany.models.Room;
-import com.mycompany.models.Sensor;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
-import java.util.*;
-
+import javax.ws.rs.core.Response;
+import java.util.ArrayList;
+import java.util.List;
 /**
  *
  * @author mskha
@@ -17,39 +17,64 @@ import java.util.*;
 @Path("/rooms")
 public class SensorRoomResource {
 
-    private static Map<String, Room> rooms = new HashMap<>();
-    private static Map<String, Sensor> sensors = new HashMap<>();
+    // simple in-memory list (no database)
+    private static List<Room> rooms = new ArrayList<>();
 
+    // preloaded data (so GET isn't empty)
+    static {
+        rooms.add(new Room("LIB-301", "Library Room", 50));
+        rooms.add(new Room("LAB-101", "Computer Lab", 30));
+    }
+
+    // GET all rooms
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Collection<Room> getAllRooms() {
-        return rooms.values();
+    public List<Room> getRooms() {
+        return rooms;
     }
 
-    @POST
-    @Consumes(MediaType.APPLICATION_JSON)
-    public void addRoom(Room room) {
-        rooms.put(room.getId(), room);
-    }
-
+    // GET room by ID
     @GET
-    @Path("/{id}")
+    @Path("/{roomId}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Room getRoom(@PathParam("id") String id) {
-        return rooms.get(id);
-    }
+    public Response getRoomById(@PathParam("roomId") String roomId) {
 
-    @DELETE
-    @Path("/{id}")
-    public void deleteRoom(@PathParam("id") String id) {
-
-        // simple check if sensors exist in room
-        for (Sensor s : sensors.values()) {
-            if (id.equals(s.getRoomId())) {
-                throw new RuntimeException("Room has sensors, cannot delete");
+        for (Room r : rooms) {
+            if (r.getId().equals(roomId)) {
+                return Response.ok(r).build();
             }
         }
 
-        rooms.remove(id);
+        return Response.status(Response.Status.NOT_FOUND)
+                .entity("Room not found")
+                .build();
+    }
+
+    // POST create room
+    @POST
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response addRoom(Room room) {
+        rooms.add(room);
+
+        return Response.status(Response.Status.CREATED)
+                .entity(room)
+                .build();
+    }
+
+    // DELETE room
+    @DELETE
+    @Path("/{roomId}")
+    public Response deleteRoom(@PathParam("roomId") String roomId) {
+
+        for (Room r : rooms) {
+            if (r.getId().equals(roomId)) {
+                rooms.remove(r);
+                return Response.ok("Room deleted").build();
+            }
+        }
+
+        return Response.status(Response.Status.NOT_FOUND)
+                .entity("Room not found")
+                .build();
     }
 }
