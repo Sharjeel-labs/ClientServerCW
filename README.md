@@ -1,4 +1,4 @@
-#### ClientServerCW
+# ClientServerCW
 
 ### Part 1: Service Architecture & Setup (10 Marks)
 ## 1. Project & Application Configuration (5 Marks)
