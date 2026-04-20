@@ -6,6 +6,7 @@
 
 package com.mycompany.resources;
 
+import com.mycompany.exceptions.RoomNotEmptyException;
 import com.mycompany.models.Room;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -65,11 +66,9 @@ public class SensorRoomResource {
         for (Room r : rooms) {
             if (r.getId().equals(roomId)) {
 
-                // check if room has sensors
+                // correct place to throw exception
                 if (!r.getSensorIds().isEmpty()) {
-                    return Response.status(Response.Status.CONFLICT)
-                            .entity("Room has sensors, cannot delete")
-                            .build();
+                    throw new RoomNotEmptyException("Room has sensors, cannot delete");
                 }
 
                 rooms.remove(r);
@@ -77,12 +76,12 @@ public class SensorRoomResource {
             }
         }
 
+        // correct behaviour if room not found
         return Response.status(Response.Status.NOT_FOUND)
                 .entity("Room not found")
                 .build();
     }
 
-    // getter to allow access from other classes
     public static List<Room> getRoomsStatic() {
         return rooms;
     }
