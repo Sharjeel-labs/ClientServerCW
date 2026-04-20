@@ -18,6 +18,7 @@ import java.util.List;
  * @author mskha
  */
 
+
 @Path("/rooms")
 public class SensorRoomResource {
 
@@ -63,6 +64,14 @@ public class SensorRoomResource {
 
         for (Room r : rooms) {
             if (r.getId().equals(roomId)) {
+
+                // check if room has sensors
+                if (!r.getSensorIds().isEmpty()) {
+                    return Response.status(Response.Status.CONFLICT)
+                            .entity("Room has sensors, cannot delete")
+                            .build();
+                }
+
                 rooms.remove(r);
                 return Response.ok("Room deleted").build();
             }
@@ -73,7 +82,7 @@ public class SensorRoomResource {
                 .build();
     }
 
-    // ✅ FIX: now INSIDE class
+    // getter to allow access from other classes
     public static List<Room> getRoomsStatic() {
         return rooms;
     }

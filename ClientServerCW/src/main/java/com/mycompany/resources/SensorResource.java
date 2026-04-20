@@ -17,16 +17,15 @@ import java.util.List;
  * @author mskha
  */
 
+
+
 @Path("/sensors")
 public class SensorResource {
 
-    // simple in-memory list
     private static List<Sensor> sensors = new ArrayList<>();
 
-    // reuse rooms list from Room resource (simple approach)
     private static List<Room> rooms = SensorRoomResource.getRoomsStatic();
 
-    // GET all sensors (with optional filter)
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public List<Sensor> getSensors(@QueryParam("type") String type) {
@@ -46,19 +45,16 @@ public class SensorResource {
         return filtered;
     }
 
-    // POST create sensor
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     public Response addSensor(Sensor sensor) {
 
-        // check if room exists
         boolean roomExists = false;
 
         for (Room r : rooms) {
             if (r.getId().equals(sensor.getRoomId())) {
                 roomExists = true;
 
-                // link sensor to room
                 r.getSensorIds().add(sensor.getId());
                 break;
             }
@@ -75,5 +71,16 @@ public class SensorResource {
         return Response.status(Response.Status.CREATED)
                 .entity(sensor)
                 .build();
+    }
+
+    // sub-resource
+    @Path("/{sensorId}/readings")
+    public SensorReadingResource getReadings(@PathParam("sensorId") String sensorId) {
+        return new SensorReadingResource(sensorId);
+    }
+
+    // FIX: needed for SensorReadingResource
+    public static List<Sensor> getSensorsStatic() {
+        return sensors;
     }
 }
