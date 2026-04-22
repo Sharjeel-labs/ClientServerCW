@@ -18,10 +18,11 @@ import java.util.List;
  * @author mskha
  */
 
+
+
 public class SensorReadingResource {
 
     private static Map<String, List<SensorReading>> readingsMap = new HashMap<>();
-
     private String sensorId;
 
     public SensorReadingResource(String sensorId) {
@@ -36,17 +37,15 @@ public class SensorReadingResource {
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
     public Response addReading(SensorReading reading) {
-
         readingsMap.putIfAbsent(sensorId, new ArrayList<>());
         readingsMap.get(sensorId).add(reading);
-
         for (Sensor s : SensorResource.getSensorsStatic()) {
             if (s.getId().equals(sensorId)) {
                 s.setCurrentValue(reading.getValue());
             }
         }
-
         return Response.status(Response.Status.CREATED).entity(reading).build();
     }
 }

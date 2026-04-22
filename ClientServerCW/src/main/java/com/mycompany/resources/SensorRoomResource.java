@@ -40,20 +40,20 @@ public class SensorRoomResource {
     @Path("/{roomId}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getRoomById(@PathParam("roomId") String roomId) {
-
         for (Room r : rooms) {
             if (r.getId().equals(roomId)) {
                 return Response.ok(r).build();
             }
         }
-
         return Response.status(Response.Status.NOT_FOUND)
-                .entity("Room not found")
+                .entity("{\"error\": \"Room not found\"}")
+                .type(MediaType.APPLICATION_JSON)
                 .build();
     }
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
     public Response addRoom(Room room) {
         rooms.add(room);
         return Response.status(Response.Status.CREATED).entity(room).build();
@@ -61,24 +61,22 @@ public class SensorRoomResource {
 
     @DELETE
     @Path("/{roomId}")
+    @Produces(MediaType.APPLICATION_JSON)
     public Response deleteRoom(@PathParam("roomId") String roomId) {
-
         for (Room r : rooms) {
             if (r.getId().equals(roomId)) {
-
-                // correct place to throw exception
                 if (!r.getSensorIds().isEmpty()) {
                     throw new RoomNotEmptyException("Room has sensors, cannot delete");
                 }
-
                 rooms.remove(r);
-                return Response.ok("Room deleted").build();
+                return Response.ok("{\"message\": \"Room deleted\"}")
+                        .type(MediaType.APPLICATION_JSON)
+                        .build();
             }
         }
-
-        // correct behaviour if room not found
         return Response.status(Response.Status.NOT_FOUND)
-                .entity("Room not found")
+                .entity("{\"error\": \"Room not found\"}")
+                .type(MediaType.APPLICATION_JSON)
                 .build();
     }
 

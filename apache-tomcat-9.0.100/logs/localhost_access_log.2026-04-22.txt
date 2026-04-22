@@ -26,3 +26,5 @@
 0:0:0:0:0:0:0:1 - - [22/Apr/2026:11:44:40 +0100] "GET /ClientServerCW/api/v1/rooms HTTP/1.1" 200 137
 0:0:0:0:0:0:0:1 - - [22/Apr/2026:11:45:10 +0100] "GET /ClientServerCW/api/v1/rooms HTTP/1.1" 200 137
 0:0:0:0:0:0:0:1 - - [22/Apr/2026:11:46:35 +0100] "POST /ClientServerCW/api/v1/rooms HTTP/1.1" 500 717
+0:0:0:0:0:0:0:1 - - [22/Apr/2026:12:02:32 +0100] "GET /ClientServerCW/api/v1/rooms HTTP/1.1" 200 212
+0:0:0:0:0:0:0:1 - - [22/Apr/2026:12:02:36 +0100] "GET /ClientServerCW/api/v1/rooms HTTP/1.1" 200 212
