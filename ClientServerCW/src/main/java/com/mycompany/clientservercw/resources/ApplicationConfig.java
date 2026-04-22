@@ -15,6 +15,8 @@ import java.util.Set;
  * @author mskha
  */
 
+
+
 @ApplicationPath("/api/v1")
 public class ApplicationConfig extends Application {
 
@@ -23,9 +25,13 @@ public class ApplicationConfig extends Application {
 
         Set<Class<?>> resources = new HashSet<>();
 
-        // register resources manually
         resources.add(com.mycompany.resources.SensorRoomResource.class);
-        resources.add(com.mycompany.clientservercw.resources.JavaEE8Resource.class);
+        resources.add(com.mycompany.resources.SensorResource.class);
+        resources.add(com.mycompany.resources.DiscoveryResource.class);
+        resources.add(com.mycompany.mappers.RoomNotEmptyExceptionMapper.class);
+        resources.add(com.mycompany.mappers.SensorUnavailableExceptionMapper.class);
+        resources.add(com.mycompany.mappers.LinkedResourceNotFoundExceptionMapper.class);
+        resources.add(org.glassfish.jersey.jackson.JacksonFeature.class);
 
         return resources;
     }
